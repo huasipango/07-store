@@ -6,162 +6,158 @@ import ProductSlideshow from "@/components/products/ProductSlideshow.astro";
 const { slug } = Astro.params;
 
 const { data, error } = await Astro.callAction(
-    actions.getProductBySlug,
-    slug ?? "",
+  actions.getProductBySlug,
+  slug ?? "",
 );
 
 if (error) {
-    return Astro.redirect("/404");
+  return Astro.redirect("/404");
 }
 
 const { product, images } = data;
 ---
 
 <MainLayout title={product.title} description={product.description}>
-    <!-- <h1 class="mt-10">{product.title}</h1> -->
+  <!-- <h1 class="mt-10">{product.title}</h1> -->
 
-    <div class="grid grid-cols-1 md:grid-cols-3 w-full gap-4">
-        <ProductSlideshow images={images} />
+  <div class="grid grid-cols-1 md:grid-cols-3 w-full gap-4">
+    <ProductSlideshow images={images} />
 
-        <section>
-            <h2 class="text-2xl font-bold">{product.title}</h2>
-            <h2 class="font-bold">${product.price}</h2>
+    <section>
+      <h2 class="text-2xl font-bold">{product.title}</h2>
+      <h2 class="font-bold">${product.price}</h2>
 
-            <h3 class="mt-5">Tallas</h3>
-            <ul class="flex gap-3">
-                {
-                    product.sizes
-                        .split(",")
-                        .map((size) => <li data-size={size}>{size}</li>)
-                }
-            </ul>
+      <h3 class="mt-5">Tallas</h3>
+      <ul class="flex gap-3">
+        {
+          product.sizes
+            .split(",")
+            .map((size) => <li data-size={size}>{size}</li>)
+        }
+      </ul>
 
-            <h3 class="mt-5">Cantidad</h3>
-            <div>
-                <button class="btn-quantity">-</button>
-                <input type="number" min="1" value="1" />
-                <button class="btn-quantity">+</button>
-            </div>
+      <h3 class="mt-5">Cantidad</h3>
+      <div>
+        <button class="btn-quantity">-</button>
+        <input type="number" min="1" value="1" />
+        <button class="btn-quantity">+</button>
+      </div>
 
-            <button
-                class="mt-5 bg-blue-500 text-white p-3 w-full disabled:bg-gray-500"
-                >Añadir al carrito</button
-            >
+      <button
+        class="mt-5 bg-blue-500 text-white p-3 w-full disabled:bg-gray-500"
+        >Añadir al carrito</button
+      >
 
-            <h3 class="mt-10">Descripción</h3>
-            <p>{product.description}</p>
-        </section>
-    </div>
+      <h3 class="mt-10">Descripción</h3>
+      <p>{product.description}</p>
+    </section>
+  </div>
 
-    <input type="hidden" id="product-id" value={product.id} />
+  <input type="hidden" id="product-id" value={product.id} />
 </MainLayout>
 
 <script>
-    import { itemsInCart } from "@/store/cart.store";
-    import { CartCookiesClient } from "@/utils/cart-cookies";
-    import { navigate } from "astro:transitions/client";
+  import { itemsInCart } from "@/store/cart.store";
+  import { CartCookiesClient } from "@/utils/cart-cookies";
+  import { navigate } from "astro:transitions/client";
 
-    document.addEventListener("astro:page-load", () =>{
-        const sizeElements = document.querySelectorAll("li[data-size]");
+  document.addEventListener("astro:page-load", () => {
+    const sizeElements = document.querySelectorAll("li[data-size]");
 
-        if (sizeElements.length === 0) return;
+    if (sizeElements.length === 0) return;
 
-        sizeElements.forEach((sizeElement) => {
-            sizeElement.addEventListener("click", () => {
-                sizeElements.forEach((el) => el.classList.remove("selected-size"));
-                sizeElement.classList.add("selected-size");
-            });
-        });
-
-        const quantityInput = document.querySelector(
-            "input[type='number']",
-        ) as HTMLInputElement;
-        const productIdInput = document.querySelector(
-            "#product-id",
-        ) as HTMLInputElement;
-
-        let quantity = 1;
-
-        const [decrementButton, incrementButton, addToCarButton] =
-            document.querySelectorAll("button");
-
-        incrementButton.addEventListener("click", () => {
-            quantity = Math.min(quantity + 1, 5); // Limitar a 5 unidades
-            quantityInput.value = quantity.toString();
-        });
-
-        decrementButton.addEventListener("click", () => {
-            quantity = Math.max(quantity - 1, 1); // No permitir menos de 1 unidad
-            quantityInput.value = quantity.toString();
-        });
-
-        addToCarButton.addEventListener("click", () => {
-            const selectedSize = document.querySelector(
-                ".selected-size",
-            )?.textContent;
-
-            if (!selectedSize) {
-                alert("Por favor, selecciona una talla.");
-                return;
-            }
-
-            // const productId = productIdInput.value;
-            // const size = selectedSize.dataset.size?.toString() || "";
-            // const quantity = parseInt(quantityInput.value, 10);
-
-            if (isNaN(quantity) || quantity < 1) {
-                alert("Cantidad inválida.");
-                return;
-            }
-
-            addToCarButton.disabled = true;
-
-            const cart = CartCookiesClient.addItem({
-                productId: productIdInput.value,
-                size: selectedSize,
-                quantity,
-            });
-
-            itemsInCart.set(cart.length);
-            
-            // TODO: cambiar cuando tengamos el ClientRouter
-            navigate("/cart");
-        });
+    sizeElements.forEach((sizeElement) => {
+      sizeElement.addEventListener("click", () => {
+        sizeElements.forEach((el) => el.classList.remove("selected-size"));
+        sizeElement.classList.add("selected-size");
+      });
     });
 
+    const quantityInput = document.querySelector(
+      "input[type='number']",
+    ) as HTMLInputElement;
+    const productIdInput = document.querySelector(
+      "#product-id",
+    ) as HTMLInputElement;
 
-    
+    let quantity = 1;
+
+    const [decrementButton, incrementButton, addToCarButton] =
+      document.querySelectorAll("button");
+
+    incrementButton.addEventListener("click", () => {
+      quantity = Math.min(quantity + 1, 5); // Limitar a 5 unidades
+      quantityInput.value = quantity.toString();
+    });
+
+    decrementButton.addEventListener("click", () => {
+      quantity = Math.max(quantity - 1, 1); // No permitir menos de 1 unidad
+      quantityInput.value = quantity.toString();
+    });
+
+    addToCarButton.addEventListener("click", () => {
+      const selectedSize =
+        document.querySelector(".selected-size")?.textContent;
+
+      if (!selectedSize) {
+        alert("Por favor, selecciona una talla.");
+        return;
+      }
+
+      // const productId = productIdInput.value;
+      // const size = selectedSize.dataset.size?.toString() || "";
+      // const quantity = parseInt(quantityInput.value, 10);
+
+      if (isNaN(quantity) || quantity < 1) {
+        alert("Cantidad inválida.");
+        return;
+      }
+
+      addToCarButton.disabled = true;
+
+      const cart = CartCookiesClient.addItem({
+        productId: productIdInput.value,
+        size: selectedSize,
+        quantity,
+      });
+
+      itemsInCart.set(cart.length);
+
+      // TODO: cambiar cuando tengamos el ClientRouter
+      navigate("/cart");
+    });
+  });
 </script>
 
 <style>
-    @reference "@/styles/global.css";
-    h3 {
-        @apply font-bold;
-    }
+  @reference "@/styles/global.css";
+  h3 {
+    @apply font-bold;
+  }
 
-    li {
-        @apply hover:underline cursor-pointer;
-    }
+  li {
+    @apply hover:underline cursor-pointer;
+  }
 
-    .selected-size {
-        @apply text-blue-500 underline font-bold transition-all;
-    }
+  .selected-size {
+    @apply text-blue-500 underline font-bold transition-all;
+  }
 
-    .btn-quantity {
-        @apply w-10 text-center p-2 border border-gray-300 hover:bg-gray-100 cursor-pointer;
-    }
+  .btn-quantity {
+    @apply w-10 text-center p-2 border border-gray-300 hover:bg-gray-100 cursor-pointer;
+  }
 
-    input {
-        @apply w-16 text-center p-2 border border-gray-300;
-    }
+  input {
+    @apply w-16 text-center p-2 border border-gray-300;
+  }
 
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 
-    input[type="number"] {
-        -moz-appearance: textfield; /* Para Firefox */
-    }
+  input[type="number"] {
+    -moz-appearance: textfield; /* Para Firefox */
+  }
 </style>
