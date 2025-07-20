@@ -2,10 +2,31 @@ import { defineAction } from 'astro:actions';
 import { db, eq, Product, ProductImage } from 'astro:db';
 import { z } from 'astro:schema';
 
+const newProduct = {
+    id: "",
+    description: "Nueva descripcion",
+    gender: "men",
+    price: 100,
+    sizes: "XS,S,M",
+    slug: "nuevo-producto",
+    stock: 0,
+    tags: "shirt,men,nuevo",
+    title: "Nuevo Producto",
+    type: "shirts",
+}
+
 export const getProductBySlug = defineAction({
     accept: "json",
     input: z.string(),
     handler: async (slug) => {
+
+        if (slug === "new") {
+            return {
+                product: newProduct,
+                images: [],
+            }
+        }
+
         const [product] = await db
             .select()
             .from(Product)

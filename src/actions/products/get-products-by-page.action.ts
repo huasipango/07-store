@@ -34,8 +34,15 @@ LIMIT ${limit} OFFSET ${(page - 1) * limit};
 
         const { rows } = await db.run(productsQuery);
 
+        const products = rows.map(product => {
+            return {
+                ...product,
+                images: product.images ? product.images : "no-image.png"
+            };
+        }) as unknown as ProductWithImages[]; // Cast to ProductWithImages
+
         return {
-            products: rows as unknown as ProductWithImages[],
+            products: products,
             totalPages: totalPages,
         }
     }
