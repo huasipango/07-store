@@ -9,7 +9,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/db": "^0.15.0",
+    "@astrojs/db": "^0.16.0",
     "@astrojs/netlify": "^6.3.4",
     "@astrojs/react": "^4.3.0",
     "@auth/core": "^0.37.4",
@@ -20,6 +20,7 @@
     "astro": "^5.8.1",
     "auth-astro": "^4.2.0",
     "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.7.0",
     "js-cookie": "^3.0.5",
     "nanostores": "^1.0.1",
     "react": "^19.1.0",
