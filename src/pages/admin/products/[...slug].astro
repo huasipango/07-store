@@ -22,7 +22,11 @@ const image = images[0].image.startsWith("http")
   : `${import.meta.env.PUBLIC_URL}/images/products/${images[0].image}`;
 ---
 
-<MainLayout title={product.title} description={product.description} image={}>
+<MainLayout
+  title={product.title}
+  description={product.description}
+  image={image}
+>
   <h1>{product.title}</h1>
   <a href="javascript:history.back()" class="text-blue-500">← Volver</a>
 
