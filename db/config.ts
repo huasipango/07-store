@@ -39,7 +39,6 @@ const ProductImage = defineTable({
   columns: {
     id: column.text({ primaryKey: true }),
     image: column.text({ unique: true }), // Unique image URL or path 
-
     product: column.text({ references: () => Product.columns.id }), // Reference to Product
   }
 })

@@ -16,9 +16,13 @@ if (error) {
 }
 
 const { product, images } = data;
+
+const image = images[0].image.startsWith("http")
+  ? images[0].image
+  : `${import.meta.env.PUBLIC_URL}/images/products/${images[0].image}`;
 ---
 
-<MainLayout title="Mantenimiento de producto">
+<MainLayout title={product.title} description={product.description} image={}>
   <h1>{product.title}</h1>
   <a href="javascript:history.back()" class="text-blue-500">← Volver</a>
 
